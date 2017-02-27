@@ -1,0 +1,243 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+  <groupId>me.dan.scala-macro-magic</groupId>
+	<artifactId>scala-macro-magic</artifactId>
+	<version>0.1-SNAPSHOT</version>
+	<name>Scala Macro Magic</name>
+	<description>Scala Macro Magic</description>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>macros</module>
+    <module>core</module>
+  </modules>
+
+	<dependencies>
+
+		<!-- unit test -->
+		<dependency>
+			<groupId>org.scalatest</groupId>
+			<artifactId>scalatest_2.10</artifactId>
+			<version>2.2.4</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- scala -->
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>2.10.4</version>
+		</dependency>
+
+    <dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-reflect</artifactId>
+			<version>2.10.4</version>
+		</dependency>
+
+		<!-- joda stuffs -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>${jodatime.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.joda</groupId>
+			<artifactId>joda-convert</artifactId>
+			<version>1.8</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<!-- scala -->
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>scala-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>scala-compile-first</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>add-source</goal>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>scala-test-compile</id>
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<recompileMode>incremental</recompileMode>
+					<verbose>true</verbose>
+					<args>
+			            <!--<arg>-Yresolve-term-conflict:object</arg>-->   <!-- required for package/object name conflict in Jenkins jar -->
+			        </args>
+<!-- 					<javacArgs> -->
+<!-- 						<javacArg>-Xlint:unchecked</javacArg> -->
+<!-- 						<javacArg>-Xlint:deprecation</javacArg> -->
+<!-- 					</javacArgs> -->
+				</configuration>
+			</plugin>
+
+			<!-- set to java 1.7 as default instead of 1.5 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+
+
+			<!-- default jar -->
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.0.2</version>
+				<executions>
+					<execution>
+						<id>default-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+
+							<!--<classifier>${jar.classifier}</classifier>-->
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.7</version>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.scalatest</groupId>
+				<artifactId>scalatest-maven-plugin</artifactId>
+				<version>1.0</version>
+				<configuration>
+					<reportsDirectory>${project.build.directory}/unit-test-reports</reportsDirectory>
+					<junitxml>.</junitxml>
+					<filereports>unit-test.txt</filereports>
+					<parallel>false</parallel>
+				</configuration>
+				<executions>
+					<execution>
+						<id>test</id>
+						<goals>
+							<goal>test</goal>
+						</goals>
+
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>2.3.2</version>
+				</plugin>
+				<plugin>
+					<groupId>net.alchim31.maven</groupId>
+					<artifactId>scala-maven-plugin</artifactId>
+					<version>3.2.1</version>
+				</plugin>
+				<!--This plugin's configuration is used to store Eclipse m2e settings
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.avro
+										</groupId>
+										<artifactId>
+											avro-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.7.7,)
+										</versionRange>
+										<goals>
+											<goal>schema</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute />
+									</action>
+								</pluginExecution>
+
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<properties>
+		<alibata.version>1.2.1</alibata.version>
+		<avro.version>1.7.7</avro.version>
+		<fa.version>2.1.2</fa.version>
+		<hadoop.version>2.7.1</hadoop.version>
+		<hbase.version>1.1.2</hbase.version>
+		<jodatime.version>2.9.1</jodatime.version>
+		<kafka.version>0.8.2.1</kafka.version>
+		<karding.version>1.2-SNAPSHOT</karding.version>
+		<parquet.version>1.6.0</parquet.version>
+		<scv.version>4.6</scv.version>
+		<symphony.version>1.5</symphony.version>
+		<talaan.version>0.2</talaan.version>
+	</properties>
+
+	<profiles>
+		<!-- default build -->
+	  <profile>
+	    <id>spark_131</id>
+      <activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+	    <properties>
+				<assembly.descriptor>assembly/assembly.xml</assembly.descriptor>
+				<spark.version>1.3.1</spark.version>
+				<jar.classifier>spark131</jar.classifier>
+        <karding.classifier>spark131</karding.classifier>
+			</properties>
+	  </profile>
+
+		<!-- for spark 1.6.0 -->
+		<profile>
+			<id>spark_160</id>
+
+			<properties>
+				<spark.version>1.6.0</spark.version>
+				<assembly.descriptor>assembly/assembly_spark160.xml</assembly.descriptor>
+				<jar.classifier>spark160</jar.classifier>
+        <karding.classifier>spark160</karding.classifier>
+			</properties>
+		</profile>
+	</profiles>
+</project>
